@@ -1,5 +1,7 @@
 package model.entities;
 
+import model.excepection.DomainException;
+
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -13,10 +15,17 @@ public class Reservation {
     private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     // static para que nao haja novas implementacoes do sdf desta classe
 
+    Date now = new Date();
     public Reservation(){
 
     }
-    public Reservation(Integer roomNumber, Date checkin, Date checkout) {
+    public Reservation(Integer roomNumber, Date checkin, Date checkout) throws DomainException{
+        if (!checkout.after(checkin)){
+            throw new DomainException("Check-out date must be after check-in date");
+        }
+        if (checkin.before(now) || checkout.before(now)){
+            throw new DomainException("Reservation dates for update must be future dates");
+        }
         this.roomNumber = roomNumber;
         this.checkIn = checkin;
         this.checkOut = checkout;
@@ -39,17 +48,15 @@ public class Reservation {
         long diffMilliSeconds = checkOut.getTime() - checkIn.getTime();
         return TimeUnit.DAYS.convert(diffMilliSeconds, TimeUnit.MILLISECONDS);
     }
-    public String updateDates(Date checkIn, Date checkOut){
-        Date now = new Date();
+    public void updateDates(Date checkIn, Date checkOut) throws DomainException {
         if (checkIn.before(now) || checkOut.before(now)){ // se quaisquer das datas forem antes de agora, dara erro!
-            return "Reservation dates for update must be future dates!";
+            throw new DomainException("Reservation dates for update must be future dates");
         }
-        else if (!checkOut.after(checkIn)){ //checkout nao pode ser antes do checkin
-            return "Check-out date must be after check-in date!";
+        if (!checkOut.after(checkIn)){ //checkout nao pode ser antes do check-in
+            throw new DomainException("Check-out date must be after check-in date");
         }
         this.checkIn = checkIn;
         this.checkOut = checkOut;
-        return null;
     }
 
     @Override
