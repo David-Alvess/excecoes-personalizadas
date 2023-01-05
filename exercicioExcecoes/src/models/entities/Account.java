@@ -16,8 +16,24 @@ public class Account {
         this.balance = balance;
         this.withdrawLimit = withdrawLimit;
     }
+    public Integer getNumber() {
+        return number;
+    }
+    public String getHolder() {
+        return holder;
+    }
+
+    public Double getBalance() {
+        return balance;
+    }
+    public Double getWithdrawLimit() {
+        return withdrawLimit;
+    }
+    public void setWithdrawLimit(Double withdrawLimit) {
+        this.withdrawLimit = withdrawLimit;
+    }
     public void deposit(double value){
-        this.balance = balance + value;
+        this.balance += value;
     }
     public void withdraw(double value) throws CustomExceptions {
         if (balance <= 0 || value > balance){
@@ -26,7 +42,7 @@ public class Account {
         if (value > withdrawLimit){
             throw new CustomExceptions("The amounts exceeds withdraw limits");
         }
-        this.balance = balance - value;
+        this.balance -= value;
     }
 
     @Override
